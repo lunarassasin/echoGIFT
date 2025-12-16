@@ -1,11 +1,15 @@
-// server/utils/encryptionService.js (New File)
+// server/utils/encryptionService.js (TEMPORARY MODIFICATION FOR DEBUGGING)
 const crypto = require('crypto');
 
 const algorithm = process.env.ENCRYPTION_ALGORITHM || 'aes-256-cbc';
-const key = Buffer.from(process.env.ENCRYPTION_KEY, 'utf8');
-const iv = Buffer.from(process.env.ENCRYPTION_IV, 'utf8');
+const key = Buffer.from(process.env.ENCRYPTION_KEY || '', 'utf8'); // Use '' fallback
+const iv = Buffer.from(process.env.ENCRYPTION_IV || '', 'utf8'); // Use '' fallback
 
-// Ensure keys are the correct length
+console.log("DEBUG: ENCRYPTION_KEY length is:", key.length);
+console.log("DEBUG: ENCRYPTION_IV length is:", iv.length);
+console.log("DEBUG: Expected key length is 32, IV length is 16.");
+
+// CRITICAL: Exit if keys are not the correct size for the chosen algorithm
 if (key.length !== 32 || iv.length !== 16) {
     console.error("CRITICAL: Encryption keys are the wrong size. Check your .env file.");
     process.exit(1); 
