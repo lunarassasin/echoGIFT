@@ -1,0 +1,17 @@
+# Dependencies
+/node_modules
+/client/node_modules
+
+# Logs and Lock Files
+npm-debug.log*
+yarn-debug.log*
+package-lock.json
+
+# Configuration and Environment Files
+.env
+/server/.env 
+/client/.env 
+
+# Compiled/Build Artifacts
+/client/dist
+/client/build

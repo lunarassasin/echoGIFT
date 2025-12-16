@@ -1,0 +1,17 @@
+client/src/main.jsx (Standard React entry point)
+
+client/src/api/api.js
+
+client/src/context/AuthContext.jsx
+
+client/src/App.jsx
+
+client/src/pages/AuthPage.jsx
+
+client/src/components/auth/RegisterForm.jsx
+
+client/src/components/auth/LoginForm.jsx
+
+client/src/pages/WisherDashboardPage.jsx
+
+client/src/components/Wisher/WishSubmissionForm.jsx
