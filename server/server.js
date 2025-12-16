@@ -2,6 +2,10 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
+require('dotenv').config({ path: './server/.env' });
+import donorRoutes from './routes/donorRoutes.js';
+
+console.log("DEBUG: ENCRYPTION_KEY is present:", !!process.env.ENCRYPTION_KEY);
 
 // Load environment variables from .env file
 dotenv.config();
@@ -37,6 +41,7 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/wishes', require('./routes/wishRoutes'));
 app.use('/api/categories', require('./routes/categoryRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes')); // NEW ADMIN ROUTE
+app.use('/api/donor', donorRoutes);
 
 const webhookRouter = require('./routes/webhookRoutes');
 app.use('/api/webhooks', express.raw({ type: 'application/json' }), webhookRouter); 
