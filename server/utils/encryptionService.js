@@ -1,17 +1,25 @@
-// server/utils/encryptionService.js (Permanent Fix)
+// server/utils/encryptionService.js (Final attempt at robust loading)
 const crypto = require('crypto');
 
 const algorithm = process.env.ENCRYPTION_ALGORITHM || 'aes-256-cbc';
 
-// PERMANENT FIX: Use 'hex' encoding here!
-const key = Buffer.from(process.env.ENCRYPTION_KEY || '', 'hex'); 
-const iv = Buffer.from(process.env.ENCRYPTION_IV || '', 'hex');
+// Use a stronger fallback if the variable is missing
+const keyString = process.env.ENCRYPTION_KEY;
+const ivString = process.env.ENCRYPTION_IV;
 
-// You can remove the temporary console.log lines now!
+// Fallback to exit if the variable is entirely missing, not just empty
+if (!keyString || !ivString) {
+    console.error("CRITICAL: Missing ENCRYPTION_KEY or ENCRYPTION_IV in environment. Cannot start.");
+    process.exit(1);
+}
 
-// CRITICAL: Exit if keys are not the correct size for the chosen algorithm
+// Convert using 'hex'
+const key = Buffer.from(keyString, 'hex'); 
+const iv = Buffer.from(ivString, 'hex');
+
+// CRITICAL: Exit if keys are not the correct size
 if (key.length !== 32 || iv.length !== 16) {
-    console.error("CRITICAL: Encryption keys are the wrong size. Check your .env file.");
+    console.error(`CRITICAL: Keys fail length check. KEY is ${key.length}, IV is ${iv.length}.`);
     process.exit(1); 
 }
 
