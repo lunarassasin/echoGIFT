@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // Define the base URL for the backend API
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/';
+const API_URL = import.meta.env.VITE_API_URL || 'https://echogift.onrender.com/api/';
 
 const api = axios.create({
   baseURL: API_URL,
