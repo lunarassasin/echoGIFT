@@ -24,3 +24,4 @@ if (rootElement) {
 } else {
     console.error('Failed to find the root element with ID "root"');
 }
+
