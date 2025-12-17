@@ -7,7 +7,7 @@ import { getOpenWishes, getDonorFulfillmentHistory } from '../api/donorApi';
 
 // Components to display the lists (you would create these next)
 import OpenWishList from '../components/Donor/OpenWishList'; 
-import FulfillmentHistory from '../components/Donor/FulfillmentHistory'; 
+import FulfillmentHistory from '../components/Donor/FullfillmentHistory.jsx'; 
 
 const DonorDashboardPage = () => {
     const { user } = useAuth(); // Access the current donor user object
