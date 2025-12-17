@@ -9,9 +9,10 @@ import wishRoutes from './routes/wishRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import donorRoutes from './routes/donorRoutes.js';
-import webhookRoutes from './routes/webhookRoutes.js';
+//import webhookRoutes from './routes/webhookRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import { getConnection } from './config/db.js';
+import { handleStripeWebhook } from './controllers/webhookController.js';
 dotenv.config();
 
 const app = express();
