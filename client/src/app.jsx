@@ -14,6 +14,15 @@ import DonorDashboardPage from './pages/DonorDashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import PaymentSuccessPage from './pages/PaymentSuccessPage';
 import SecretAdminRegister from './pages/SecretAdminRegister';
+import { useEffect, useState } from 'react';
+import api from '../api/api';
+
+const SecretAdminRegister = () => {
+    useEffect(() => {
+        // Clear everything so no old "Wisher" sessions can trigger redirects
+        localStorage.removeItem('token');
+        console.log("Session cleared for Admin Setup");
+    }, []);
 
 // --- Private Route Component ---
 // Ensures a route is only accessible if the user is logged in AND has the correct role
@@ -91,6 +100,7 @@ const App = () => {
       </AuthProvider>
     </Router>
   );
+};
 };
 
 export default App;
