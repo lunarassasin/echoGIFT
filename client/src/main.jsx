@@ -13,12 +13,10 @@ const rootElement = document.getElementById('root');
 if (rootElement) {
     ReactDOM.createRoot(rootElement).render(
         <React.StrictMode>
-            <BrowserRouter>
                 {/* Wrap the entire application in the authentication context */}
                 <AuthProvider>
                     <App />
                 </AuthProvider>
-            </BrowserRouter>
         </React.StrictMode>
     );
 } else {
