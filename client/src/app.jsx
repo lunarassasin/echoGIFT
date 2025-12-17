@@ -2,7 +2,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
-// Layout Components (Mockups - You need to create these)
+// Layout Components
 import Header from './components/layout/Header'; 
 import Footer from './components/layout/Footer';
 
@@ -13,39 +13,13 @@ import WisherDashboardPage from './pages/WisherDashboardPage';
 import DonorDashboardPage from './pages/DonorDashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import PaymentSuccessPage from './pages/PaymentSuccessPage';
-import SecretAdminRegister from './pages/SecretAdminRegister';
-import { useEffect, useState } from 'react';
-import api from '../api/api';
+import SecretAdminRegister from './pages/SecretAdminRegister'; // This is all you need!
 
-const SecretAdminRegister = () => {
-    useEffect(() => {
-        // Clear everything so no old "Wisher" sessions can trigger redirects
-        localStorage.removeItem('token');
-        console.log("Session cleared for Admin Setup");
-    }, []);
-
-// --- Private Route Component ---
-// Ensures a route is only accessible if the user is logged in AND has the correct role
 const PrivateRoute = ({ children, requiredRole }) => {
   const { user, loading } = useAuth();
-  
-  if (loading) {
-    // NOTE: Replace this with a proper spinner or skeleton loader in production
-    return <div className="text-center p-8">Loading user data...</div>;
-  }
-  
-  // 1. Not logged in -> Redirect to login
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-  
-  // 2. Logged in, but wrong role -> Redirect to a safe spot (e.g., their correct dashboard or home)
-  if (requiredRole && user.user_type !== requiredRole) {
-    // If they are logged in but tried to access the wrong dashboard, send them to the root.
-    return <Navigate to="/" replace />; 
-  }
-  
-  // 3. Authorized -> Render the component
+  if (loading) return <div className="text-center p-8">Loading user data...</div>;
+  if (!user) return <Navigate to="/login" replace />;
+  if (requiredRole && user.user_type !== requiredRole) return <Navigate to="/" replace />; 
   return children;
 };
 
@@ -57,41 +31,16 @@ const App = () => {
           <Header />
           <main className="flex-grow p-4">
             <Routes>
-              {/* Public Routes */}
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<AuthPage type="login" />} />
               <Route path="/register" element={<AuthPage type="register" />} />
               <Route path="/setup-admin-xyz-99" element={<SecretAdminRegister />} />
-
-              {/* Payment Result Route (Must be public as it comes from Stripe's redirect) */}
               <Route path="/donor/success" element={<PaymentSuccessPage />} />
 
-              {/* ---------------------------------- */}
-              {/* PROTECTED ROUTES (Requires Login)  */}
-              {/* ---------------------------------- */}
+              <Route path="/wisher/dashboard" element={<PrivateRoute requiredRole="Wisher"><WisherDashboardPage /></PrivateRoute>} />
+              <Route path="/donor/dashboard" element={<PrivateRoute requiredRole="Donor"><DonorDashboardPage /></PrivateRoute>} />
+              <Route path="/admin/dashboard" element={<PrivateRoute requiredRole="Admin"><AdminDashboardPage /></PrivateRoute>} />
 
-              {/* Wisher Dashboard (Restricted to 'Wisher') */}
-              <Route path="/wisher/dashboard" element={
-                <PrivateRoute requiredRole="Wisher">
-                  <WisherDashboardPage />
-                </PrivateRoute>
-              } />
-
-              {/* Donor Dashboard (Restricted to 'Donor') */}
-              <Route path="/donor/dashboard" element={
-                <PrivateRoute requiredRole="Donor">
-                  <DonorDashboardPage />
-                </PrivateRoute>
-              } />
-
-              {/* Admin Dashboard (Restricted to 'Admin') */}
-              <Route path="/admin/dashboard" element={
-                <PrivateRoute requiredRole="Admin">
-                  <AdminDashboardPage />
-                </PrivateRoute>
-              } />
-
-              {/* Catch-all for 404 (Redirects to Home) */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
@@ -100,7 +49,6 @@ const App = () => {
       </AuthProvider>
     </Router>
   );
-};
 };
 
 export default App;
