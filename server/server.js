@@ -28,7 +28,11 @@ getConnection()
   });
 
 // --- Middleware ---
-app.use(cors());
+app.use(cors({
+    origin: 'https://echo-gift.vercel.app', // Your specific Vercel URL
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
+}));
 
 // 1. STRIPE WEBHOOK (Must stay above express.json())
 // We apply express.raw only to this specific path
