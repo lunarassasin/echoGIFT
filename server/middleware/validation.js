@@ -5,8 +5,8 @@ import { z } from 'zod';
 export const RegisterSchema = z.object({
     email: z.string().email({ message: "Invalid email address format." }),
     password: z.string().min(6, { message: "Password must be at least 6 characters long." }),
-    user_type: z.enum(["Wisher", "Donor"], { 
-        message: "User type must be either Wisher or Donor." 
+    user_type: z.enum(["Wisher", "Donor", "Admin"], { 
+        message: "User type must be either Wisher, Donor or Admin." 
     }),
     display_name: z.string().min(3, { message: "Display name is required." }),
     real_name: z.string().optional(), 
