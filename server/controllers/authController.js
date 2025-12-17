@@ -12,6 +12,10 @@ const generateToken = (id) => {
 };
 
 export const registerUser = async (req, res) => {
+    console.log("📥 Incoming Registration Request:", {
+        body: req.body,
+        time: new Date().toISOString()
+    });
     const { email, password, user_type, display_name, real_name, shipping_address } = req.body;
     
     try {
