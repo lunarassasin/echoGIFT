@@ -10,6 +10,7 @@ import categoryRoutes from './routes/categoryRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import donorRoutes from './routes/donorRoutes.js';
 import webhookRoutes from './routes/webhookRoutes.js';
+import paymentRoutes from './routes/paymentRoutes.js';
 import { getConnection } from './config/db.js';
 dotenv.config();
 
@@ -36,7 +37,7 @@ app.use(cors({
 
 // 1. STRIPE WEBHOOK (Must stay above express.json())
 // We apply express.raw only to this specific path
-app.use('/api/webhooks', express.raw({ type: 'application/json' }), webhookRoutes);
+app.post('/api/webhooks/stripe', express.raw({ type: 'application/json' }), handleStripeWebhook);
 
 // 2. STANDARD JSON PARSER
 // Applied to all other routes
@@ -48,6 +49,7 @@ app.use('/api/wishes', wishRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/donor', donorRoutes);
+app.use('api/payments', paymentRoutes);
 
 // Status check
 app.get('/', (req, res) => {
