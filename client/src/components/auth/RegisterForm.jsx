@@ -115,14 +115,14 @@ const RegisterForm = () => {
       </div>
 
       {/* Real Name Input (Crucial for Wisher verification) */}
-      {user_type === 'Wisher' && (
+
         <div className="mb-4">
           <label htmlFor="real_name" className="block text-gray-700 mb-1">Legal Name (For secure address verification/delivery ONLY)</label>
           <input type="text" name="real_name" value={real_name} onChange={onChange} required
             className="w-full px-3 py-2 border rounded-md focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
-      )}
+
 
       {/* Password Inputs */}
       <div className="mb-4">
