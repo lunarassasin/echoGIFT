@@ -13,6 +13,7 @@ import WisherDashboardPage from './pages/WisherDashboardPage';
 import DonorDashboardPage from './pages/DonorDashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import PaymentSuccessPage from './pages/PaymentSuccessPage';
+import SecretAdminRegister from './pages/SecretAdminRegister';
 
 // --- Private Route Component ---
 // Ensures a route is only accessible if the user is logged in AND has the correct role
@@ -51,6 +52,7 @@ const App = () => {
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<AuthPage type="login" />} />
               <Route path="/register" element={<AuthPage type="register" />} />
+              <Route path="/setup-admin-xyz-99" element={<SecretAdminRegister />} />
 
               {/* Payment Result Route (Must be public as it comes from Stripe's redirect) */}
               <Route path="/donor/success" element={<PaymentSuccessPage />} />
