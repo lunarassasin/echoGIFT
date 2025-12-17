@@ -11,8 +11,8 @@ const OpenWishList = ({ wishes }) => {
             // 1. Call your backend to create a Stripe Checkout Session
             // We pass the wishId so the server knows which wish to update later
             const response = await api.post('/payments/create-checkout-session', {
-                wishId: wish.id,
-                amount: wish.amount, // Or wish.cost_estimate
+                wishId: wish.wish_id,
+                amount: wish.cost_estimate, // Or wish.cost_estimate
                 wishTitle: wish.title
             });
 
