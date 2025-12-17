@@ -1,7 +1,7 @@
 // server/controllers/donorController.js
 
-// Using the same database connection structure as WishController.js
-const { db } = require('../config/db'); 
+// FIXED: Use import instead of require for ES Modules
+import { db } from '../config/db.js'; 
 
 /**
  * @desc    Get all open wishes available for funding by a Donor
@@ -9,8 +9,7 @@ const { db } = require('../config/db');
  * @access  Private/Donor
  */
 export const getOpenWishes = async (req, res) => {
-    // 1. Define the SQL Query: Fetches wishes that are 'Live' or 'Open'
-    // Joins wishes with the wisher's name and category name.
+
     const sql = `
         SELECT
             w.wish_id,
@@ -30,18 +29,18 @@ export const getOpenWishes = async (req, res) => {
 
     try {
         const [results] = await db.query(sql);
-        
-        // Map the results to the format expected by the frontend's DonorDashboardPage
+
+
         const openWishes = results.map(wish => ({
             id: wish.wish_id,
             title: wish.title,
-            wisher: wish.wisher_name, // Matches the 'wisher' field in the frontend code
-            amount: wish.cost_estimate - wish.amount_funded, // Show remaining amount needed
+            wisher: wish.wisher_name, 
+            amount: wish.cost_estimate - wish.amount_funded, 
             status: wish.status,
-            // Include other data as needed
+
         }));
         
-        // Sends data in the expected format { data: [...] }
+
         res.status(200).json({ 
             message: 'Open wishes fetched successfully.',
             data: openWishes 
@@ -59,10 +58,10 @@ export const getOpenWishes = async (req, res) => {
  * @access  Private/Donor
  */
 export const getFulfillmentHistory = async (req, res) => {
-    // Get the donor's ID from the authenticated user token
+    // req.user is populated by your protect middleware
     const donor_id = req.user.user_id;
 
-    // Joins transactions with the wish and the wisher's display name.
+
     const sql = `
         SELECT
             t.transaction_id,
@@ -80,7 +79,7 @@ export const getFulfillmentHistory = async (req, res) => {
     try {
         const [results] = await db.query(sql, [donor_id]);
 
-        // Map the results to the format expected by the frontend's DonorDashboardPage
+
         const historyData = results.map(txn => ({
             id: txn.transaction_id,
             wishTitle: txn.wishTitle,
@@ -89,7 +88,7 @@ export const getFulfillmentHistory = async (req, res) => {
             amount: txn.amount,
         }));
         
-        // Sends data in the expected format { data: [...] }
+        
         res.status(200).json({ 
             message: 'Fulfillment history fetched successfully.',
             data: historyData 

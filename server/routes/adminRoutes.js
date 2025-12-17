@@ -1,7 +1,10 @@
 // server/routes/adminRoutes.js (New File)
-const express = require('express');
-const { protect, restrictTo } = require('../middleware/authMiddleware');
-const { getPendingWishes, approveWish } = require('../controllers/adminController');
+// server/routes/adminRoutes.js
+import express from 'express';
+// FIXED: Use named imports and include the .js extension
+import { protect, restrictTo } from '../middleware/authMiddleware.js';
+// FIXED: Use named imports for your controller functions
+import { getPendingWishes, approveWish } from '../controllers/adminController.js'
 
 const router = express.Router();
 
@@ -11,7 +14,8 @@ router.use(protect, restrictTo(['Admin']));
 // Admin Dashboard: View pending items
 router.get('/wishes/pending', getPendingWishes);
 
-// Admin Action: Approve a wish (e.g., after successful verification)
+// Admin Action: Approve a wish (changes status from 'Pending' to 'Live')
 router.put('/wishes/:id/approve', approveWish);
 
-module.exports = router;
+export default router;
+

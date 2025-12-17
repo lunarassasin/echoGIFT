@@ -1,6 +1,6 @@
 // server/config/db.js
-const mysql = require('mysql2');
-const dotenv = require('dotenv');
+import mysql from 'mysql2';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -11,18 +11,17 @@ const pool = mysql.createPool({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   waitForConnections: true,
-  connectionLimit: 10, // Max number of concurrent connections
+  connectionLimit: 10,
   queueLimit: 0 
 });
 
-// Convert pool.query to use async/await syntax (optional, but cleaner)
-const db = pool.promise();
+// Convert pool.query to use async/await syntax
+export const db = pool.promise();
 
 /**
  * Function to test the database connection
  */
-const getConnection = async () => {
+export const getConnection = async () => {
   return db.getConnection();
 };
 
-module.exports = { db, getConnection };

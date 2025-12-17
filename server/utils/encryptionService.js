@@ -1,63 +1,54 @@
-// server/utils/encryptionService.js (Final attempt at robust loading)
-const crypto = require('crypto');
+// server/utils/encryptionService.js
+import crypto from 'crypto';
+import dotenv from 'dotenv';
 
-const algorithm = process.env.ENCRYPTION_ALGORITHM || 'aes-256-cbc';
+dotenv.config();
 
-// Use a stronger fallback if the variable is missing
-const keyString = process.env.ENCRYPTION_KEY;
-const ivString = process.env.ENCRYPTION_IV;
-
-// Fallback to exit if the variable is entirely missing, not just empty
-if (!keyString || !ivString) {
-    console.error("CRITICAL: Missing ENCRYPTION_KEY or ENCRYPTION_IV in environment. Cannot start.");
-    process.exit(1);
-}
-
-// Convert using 'hex'
-const key = Buffer.from(keyString, 'hex'); 
-const iv = Buffer.from(ivString, 'hex');
-
-// CRITICAL: Exit if keys are not the correct size
-if (key.length !== 32 || iv.length !== 16) {
-    console.error(`CRITICAL: Keys fail length check. KEY is ${key.length}, IV is ${iv.length}.`);
-    process.exit(1); 
-}
+const ALGORITHM = 'aes-256-cbc';
+// The key must be exactly 32 bytes. We use the key from .env
+const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY; 
+const IV_LENGTH = 16; // For AES, this is always 16
 
 /**
- * Encrypts a plaintext string.
- * @param {string} text - The data to encrypt (e.g., shipping address).
- * @returns {string} Encrypted text as a hex string.
+ * Encrypts plain text into a hex string
+ * Format: iv:encryptedData
  */
-const encrypt = (text) => {
+export const encrypt = (text) => {
     if (!text) return null;
+    
     try {
-        const cipher = crypto.createCipheriv(algorithm, key, iv);
-        let encrypted = cipher.update(text, 'utf8', 'hex');
-        encrypted += cipher.final('hex');
-        return encrypted;
-    } catch (e) {
-        console.error("Encryption failed:", e);
+        const iv = crypto.randomBytes(IV_LENGTH);
+        const cipher = crypto.createCipheriv(ALGORITHM, Buffer.from(ENCRYPTION_KEY), iv);
+        
+        let encrypted = cipher.update(text);
+        encrypted = Buffer.concat([encrypted, cipher.final()]);
+        
+        return iv.toString('hex') + ':' + encrypted.toString('hex');
+    } catch (error) {
+        console.error('Encryption Error:', error);
         return null;
     }
 };
 
 /**
- * Decrypts a ciphertext string.
- * @param {string} encryptedText - The data to decrypt.
- * @returns {string} Decrypted plaintext string.
+ * Decrypts a hex string back into plain text
  */
-const decrypt = (encryptedText) => {
-    if (!encryptedText) return null;
+export const decrypt = (text) => {
+    if (!text) return null;
+
     try {
-        const decipher = crypto.createDecipheriv(algorithm, key, iv);
-        let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
-        decrypted += decipher.final('utf8');
-        return decrypted;
-    } catch (e) {
-        // This is crucial: If decryption fails, the address is likely invalid/corrupted
-        console.error("Decryption failed:", e);
-        return null; 
+        const textParts = text.split(':');
+        const iv = Buffer.from(textParts.shift(), 'hex');
+        const encryptedText = Buffer.from(textParts.join(':'), 'hex');
+        
+        const decipher = crypto.createDecipheriv(ALGORITHM, Buffer.from(ENCRYPTION_KEY), iv);
+        
+        let decrypted = decipher.update(encryptedText);
+        decrypted = Buffer.concat([decrypted, decipher.final()]);
+        
+        return decrypted.toString();
+    } catch (error) {
+        console.error('Decryption Error:', error);
+        return '[Error Decrypting Address]';
     }
 };
-
-module.exports = { encrypt, decrypt };

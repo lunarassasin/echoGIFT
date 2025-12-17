@@ -1,6 +1,6 @@
-// server/routes/categoryRoutes.js (New File)
-const express = require('express');
-const { db } = require('../config/db');
+// server/routes/categoryRoutes.js
+import express from 'express';
+import { db } from '../config/db.js';
 
 const router = express.Router();
 
@@ -14,5 +14,4 @@ router.get('/', async (req, res) => {
     }
 });
 
-module.exports = router;
-// (Don't forget to add app.use('/api/categories', require('./routes/categoryRoutes')); to server.js)
+export default router;

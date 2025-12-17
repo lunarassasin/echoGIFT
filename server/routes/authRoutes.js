@@ -1,8 +1,8 @@
 // server/routes/authRoutes.js (Updated)
 const express = require('express');
-const { registerUser, loginUser, validateToken } = require('../controllers/authController');
-const { protect } = require('../middleware/authMiddleware');
-const { validate, RegisterSchema } = require('../middleware/validation'); // NEW IMPORT
+import { registerUser, loginUser, validateToken } from '../controllers/authController.js';
+import { protect } from '../middleware/authMiddleware.js';
+import { validate, RegisterSchema } from '../middleware/validation.js';
 
 const router = express.Router();
 
@@ -14,4 +14,4 @@ router.post('/login', loginUser);
 // Route for JWT check
 router.get('/validate', protect, validateToken);
 
-module.exports = router;
+export default router;

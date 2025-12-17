@@ -1,56 +1,55 @@
-// server.js
-const express = require('express');
-const dotenv = require('dotenv');
-const cors = require('cors');
-require('dotenv').config({ path: './server/.env' });
+// server/server.js
+import express from 'express';
+import dotenv from 'dotenv';
+import cors from 'cors';
+
+// Route Imports (Must include .js)
+import authRoutes from './routes/authRoutes.js';
+import wishRoutes from './routes/wishRoutes.js';
+import categoryRoutes from './routes/categoryRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 import donorRoutes from './routes/donorRoutes.js';
-
-console.log("DEBUG: ENCRYPTION_KEY is present:", !!process.env.ENCRYPTION_KEY);
-
-// Load environment variables from .env file
+import webhookRoutes from './routes/webhookRoutes.js';
+import { getConnection } from './config/db.js';
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors()); // Allow cross-origin requests from the React client
-app.use(express.json()); // Allows parsing of JSON request bodies
+// DEBUG: Verify environment
+console.log("DEBUG: ENCRYPTION_KEY is present:", !!process.env.ENCRYPTION_KEY);
 
-// --- Database Connection (will be defined in config/db.js) ---
-const db = require('./config/db'); 
-db.getConnection()
+// --- Database Connection Check ---
+getConnection()
   .then(() => console.log('✅ MySQL Database Connected'))
   .catch(err => {
     console.error('❌ Database Connection Failed:', err.stack);
     process.exit(1);
   });
 
-app.use((req, res, next) => {
-    // Check if the request is NOT for the webhook path
-    if (req.originalUrl === '/api/webhooks/stripe') {
-        next();
-    } else {
-        // Use standard JSON parser for all other API routes
-        express.json()(req, res, next);
-    }
-});
+// --- Middleware ---
+app.use(cors());
 
-// --- Routes (To be added later) ---
-app.use('/api/auth', require('./routes/authRoutes')); 
-app.use('/api/wishes', require('./routes/wishRoutes'));
-app.use('/api/categories', require('./routes/categoryRoutes'));
-app.use('/api/admin', require('./routes/adminRoutes')); // NEW ADMIN ROUTE
+// 1. STRIPE WEBHOOK (Must stay above express.json())
+// We apply express.raw only to this specific path
+app.use('/api/webhooks', express.raw({ type: 'application/json' }), webhookRoutes);
+
+// 2. STANDARD JSON PARSER
+// Applied to all other routes
+app.use(express.json());
+
+// --- Routes ---
+app.use('/api/auth', authRoutes);
+app.use('/api/wishes', wishRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/donor', donorRoutes);
 
-const webhookRouter = require('./routes/webhookRoutes');
-app.use('/api/webhooks', express.raw({ type: 'application/json' }), webhookRouter); 
-// We use express.raw() here to get the raw body needed for Stripe verification
-
-// Basic status check route
+// Status check
 app.get('/', (req, res) => {
   res.send('echoGIFT API is Running');
 });
+
 
 
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
